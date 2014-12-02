@@ -37,15 +37,16 @@ byte *RenderPicture( struct scene *Scene ) {
 	int i = 0;
 	while( tmpSource ) {
 		Sources[i++] = tmpSource;
+		tmpSource = tmpSource->next_source;
 	}
 
 	for( int iHeight = 0; iHeight < Scene->height; iHeight++ ) { // main loop: all rows (y)
 		for( int iWidth = 0; iWidth < Scene->width; iWidth++ ) { // main loop: all column (x)
-			int sum_amplitude = 0;
+			double sum_amplitude = 0.0f;
 
 			for( int iSources = 0; iSources < count_sources; iSources++ ) { // main loop: all sources
 				double distance = sqrt( pow(abs(Sources[iSources]->x-iWidth),2) + pow(abs(Sources[iSources]->y-iHeight),2) );
-				int pixelResult = (sin( distance * 2 * M_PI ) + 1) * Sources[iSources]->amplitude; // amplitude between 0 and 128
+				double pixelResult = (sin( distance * 2.0f * M_PI / Sources[iSources]->wavelength ) + 1) * Sources[iSources]->amplitude; // amplitude between 0 and 128
 
 				sum_amplitude += pixelResult;
 			}
@@ -53,7 +54,7 @@ byte *RenderPicture( struct scene *Scene ) {
 			if( sum_amplitude > 255 )
 				sum_amplitude = 255;
 
-			int pixel_position = ((Scene->height*iHeight)+iWidth)*3;
+			int pixel_position = ((Scene->width*iHeight)+iWidth)*3;
 
 			output_buffer[pixel_position] = sum_amplitude;		// B
 			output_buffer[pixel_position+1] = sum_amplitude;	// G

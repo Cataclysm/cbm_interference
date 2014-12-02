@@ -63,13 +63,13 @@ bool write_output_file( const char *filename, byte *picture_buffer, struct scene
 	info[10] = (unsigned char)( h>>16);
 	info[11] = (unsigned char)( h>>24);
 
-	info[24] = (unsigned char)( sizeData    );
-	info[25] = (unsigned char)( sizeData>> 8);
-	info[26] = (unsigned char)( sizeData>>16);
-	info[27] = (unsigned char)( sizeData>>24);
+	info[20] = (unsigned char)( sizeData    );
+	info[21] = (unsigned char)( sizeData>> 8);
+	info[22] = (unsigned char)( sizeData>>16);
+	info[23] = (unsigned char)( sizeData>>24);
 
-	fwrite( (char*)file, sizeof(file), 1, fileHandle );
-	fwrite( (char*)info, sizeof(info), 1, fileHandle );
+	fwrite( (char*)file, 1, sizeof(file), fileHandle );
+	fwrite( (char*)info, 1, sizeof(info), fileHandle );
 
 	unsigned char pad[3] = {0,0,0};
 
@@ -84,9 +84,9 @@ bool write_output_file( const char *filename, byte *picture_buffer, struct scene
 	        pixel[1] = picture_buffer[pixelPosition+1];
 	        pixel[2] = picture_buffer[pixelPosition+2];
 
-	        fwrite( (char*)pixel, 3, 1, fileHandle );
+	        fwrite( (char*)pixel, 1, 3, fileHandle );
 	    }
-	    fwrite( (char*)pad, padSize, 1, fileHandle );
+	    fwrite( (char*)pad, 1, padSize, fileHandle );
 	}
 	fclose( fileHandle );
 

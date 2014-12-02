@@ -73,14 +73,16 @@ bool parse_scene( char *in_buffer, struct scene *Scene ) {
 	if( !in_buffer || !Scene )
 		return false;
 
-	int count_lines = 0, c = 0;
+	int count_lines = 0;
 	for( int c = 0; in_buffer[c]; c++ ) {
 		if( in_buffer[c] == '\n' )
 			count_lines++;
 	}
 
 	char *lines[count_lines];
-	int j = 0;
+	lines[0] = in_buffer;
+	int j = 1;
+
 	for( int i = 0; in_buffer[i]; i++ ) {
 		if( in_buffer[i] == '\r' || in_buffer[i] == '\n' ) {
 			in_buffer[i] = 0;
@@ -94,13 +96,11 @@ bool parse_scene( char *in_buffer, struct scene *Scene ) {
 	struct source *last_source = NULL;
 
 	for( int i = 0; i < count_lines; i++ ){
-		if( sscanf( in_buffer, "[WIDTH:%i]", &temp_integer ) != EOF )
+		if( sscanf( lines[i], "[WIDTH:%i]", &temp_integer ) )
 			Scene->width = temp_integer;
-		if( sscanf( in_buffer, "[HEIGHT:%i]", &temp_integer ) != EOF )
+		else if( sscanf( lines[i], "[HEIGHT:%i]", &temp_integer ) )
 			Scene->height = temp_integer;
-
-
-		if( sscanf( in_buffer, "[SOURCE:%i,%i,%i,%i,%i]", &x, &y, &ampl, &wvlength, &fade) != EOF ) {
+		else if( sscanf( lines[i], "[SOURCE:%i,%i,%i,%i,%i]", &x, &y, &ampl, &wvlength, &fade) ) {
 			struct source *new_source = malloc( sizeof( struct source ) );
 			if( !new_source )
 				return false;
