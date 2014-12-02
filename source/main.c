@@ -9,6 +9,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
+
+#include "configfile.h"
+#include "outputfile.h"
+#include "render.h"
 
 /*
  * Synopsis: Gibt kurzen Hilfstext aus
@@ -38,15 +43,27 @@ int main( int argc, char **argv ) {
 	char *output_file = argv[2];
 
 	// Modul file_input:
-	//read_configfile(definitions_file);
+	struct scene *renderScene = read_configfile( definitions_file );
+	if( ! renderScene ) {
+		printf("FEHLER: Definitionsdatei enthält einen Fehler.\n");
+		return( EXIT_FAILURE );
+	}
 
 	// Modul calc:
-	// Render(config_array);
+	byte *output_picture = RenderPicture( renderScene );
+	if( !output_picture ) {
+		clean_scene( renderScene );
+		printf("FEHLER: Beim Render ging etwas schief :-(\n");
+		return( EXIT_FAILURE );
+	}
 
 	// Modul file_output:
-	//write_file(...);
+	if( !write_output_file( output_file, output_picture, renderScene ) ) {
+		free( output_picture );
+		clean_scene( renderScene );
+		printf("FEHLER: Beim Speichern der Bilddatei ging etwas schief.\n");
+		return( EXIT_FAILURE );
+	}
 
-	// TEST
-
-	return 0;
+	return EXIT_SUCCESS;
 }
