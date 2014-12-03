@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "configfile.h"
 
@@ -92,7 +93,7 @@ bool parse_scene( char *in_buffer, struct scene *Scene ) {
 	}
 
 	int temp_integer = 0;
-	int x=0, y=0, ampl=0, wvlength=0, fade=0;
+	int x=0, y=0, ampl_r=0, ampl_g=0, ampl_b=0, wvlength=0, fade_distance=0;
 	struct source *last_source = NULL;
 
 	for( int i = 0; i < count_lines; i++ ){
@@ -100,15 +101,18 @@ bool parse_scene( char *in_buffer, struct scene *Scene ) {
 			Scene->width = temp_integer;
 		else if( sscanf( lines[i], "[HEIGHT:%i]", &temp_integer ) )
 			Scene->height = temp_integer;
-		else if( sscanf( lines[i], "[SOURCE:%i,%i,%i,%i,%i]", &x, &y, &ampl, &wvlength, &fade) ) {
+		else if( sscanf( lines[i], "[SOURCE:%i,%i,%i,%i,%i,%i,%i]", &x, &y, &ampl_r, &ampl_g, &ampl_b, &wvlength, &fade_distance) ) {
 			struct source *new_source = malloc( sizeof( struct source ) );
 			if( !new_source )
 				return false;
 
-			new_source->x = x;
-			new_source->y = y;
-			new_source->amplitude = ampl;
-			new_source->wavelength = wvlength;
+			new_source->x				= x;
+			new_source->y				= y;
+			new_source->amplitude_r		= ampl_r;
+			new_source->amplitude_g		= ampl_g;
+			new_source->amplitude_b		= ampl_b;
+			new_source->wavelength 		= wvlength;
+			new_source->fade_factor		= fade_distance;
 			new_source->next_source = NULL;
 
 			if( last_source )

@@ -29,27 +29,27 @@ int main( int argc, char **argv ) {
 	if( argc == 2 ) {
 		if( !strcmp( argv[1], "--help" ) ) {
 			print_help( argv[0] );
-			return 0;
+			return( EXIT_SUCCESS );
 		}
 	}
 
 	if( argc != 3 ) {
 		printf("FEHLER: Falsche Anzahl von Parametern.\n");
 		print_help( argv[0] );
-		return 1;
+		return( EXIT_FAILURE );
 	}
 
 	char *definitions_file = argv[1];
 	char *output_file = argv[2];
 
-	// Modul file_input:
+	// Module configfile.c:
 	struct scene *renderScene = read_configfile( definitions_file );
 	if( ! renderScene ) {
-		printf("FEHLER: Definitionsdatei enthält einen Fehler.\n");
+		printf("FEHLER: Definitionsdatei enth\204lt einen Fehler.\n");
 		return( EXIT_FAILURE );
 	}
 
-	// Modul calc:
+	// Module render.c:
 	byte *output_picture = RenderPicture( renderScene );
 	if( !output_picture ) {
 		clean_scene( renderScene );
@@ -57,7 +57,7 @@ int main( int argc, char **argv ) {
 		return( EXIT_FAILURE );
 	}
 
-	// Modul file_output:
+	// Module outputfile.c:
 	if( !write_output_file( output_file, output_picture, renderScene ) ) {
 		free( output_picture );
 		clean_scene( renderScene );
@@ -65,5 +65,5 @@ int main( int argc, char **argv ) {
 		return( EXIT_FAILURE );
 	}
 
-	return EXIT_SUCCESS;
+	return( EXIT_SUCCESS );
 }

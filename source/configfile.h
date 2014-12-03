@@ -15,7 +15,9 @@ struct source {
 	unsigned int	x;
 	unsigned int	y;
 
-	unsigned int	amplitude;
+	unsigned int	amplitude_r;
+	unsigned int	amplitude_g;
+	unsigned int	amplitude_b;
 	unsigned int	wavelength;
 	unsigned int	fade_factor;
 
